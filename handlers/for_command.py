@@ -41,11 +41,13 @@ async def cmd_clear(message: Message):
     from main import bot
     await message.answer('Дай мне секундочку...')
     await sleep(2)
+    print('Start clearing messages!!!')
     for i in range(message.message_id, 0, -1):
         try:  
             await bot.delete_message(message.from_user.id, i)
-            print( message.message_id)
-        except: 1
-    print( message.message_id)
+            print(i)
+        except: i = 1
+    print(message.message_id + 1)
+    await bot.delete_message(message.from_user.id, message.message_id + 1)
 
 

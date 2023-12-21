@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 from logging import basicConfig, DEBUG
 from aiogram import Bot, Dispatcher 
 from datetime import datetime as D
-from sending_messages.admin_ntf import send_ntf_admins
+from sending_messages.admin_msg import send_ntf_admins, send_error_admins
 
 from handlers import (
     for_command,
@@ -36,7 +36,7 @@ async def main():
         await dp.start_polling(bot)
 
     except Exception as error:
-        print(error)
+        send_error_admins(error)
 
     finally:
         await send_ntf_admins('Via была отключена')

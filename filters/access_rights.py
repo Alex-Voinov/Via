@@ -9,5 +9,10 @@ class AdminFilter(BaseFilter):
         self.__ADMINS_ID = ADMINS_ID
     async def __call__(self, message: Message) -> bool:
         probably_admin_id = message.chat.id
-        return any(map(lambda a_id: a_id == probably_admin_id, self.__ADMINS_ID))
+        return any(
+            map(
+                lambda admin_id: admin_id == probably_admin_id,
+                self.__ADMINS_ID
+            )
+        )
         

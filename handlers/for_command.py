@@ -35,19 +35,16 @@ async def cmd_stats(message: Message):
     Колличество свободных prime-ключей: {amount_key}
 ''')
 
+
 @router.message(Command('clear', 'cls'))
 async def cmd_clear(message: Message):
     from asyncio import sleep
     from main import bot
     await message.answer('Дай мне секундочку...')
     await sleep(2)
-    print('Start clearing messages!!!')
     for i in range(message.message_id, 0, -1):
-        try:  
-            await bot.delete_message(message.from_user.id, i)
-            print(i)
-        except: i = 1
-    print(message.message_id + 1)
+        try:  await bot.delete_message(message.from_user.id, i)
+        except: 1
     await bot.delete_message(message.from_user.id, message.message_id + 1)
 
 

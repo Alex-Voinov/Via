@@ -3,6 +3,8 @@ from dotenv import dotenv_values
 from logging import basicConfig, DEBUG
 from aiogram import Bot, Dispatcher 
 from datetime import datetime as D
+from sending_messages.admin_ntf import send_ntf_admins
+
 from handlers import (
     for_command,
     for_keybords,
@@ -13,7 +15,6 @@ from handlers import (
 
 START_TIME = D.now()
 ENV = dotenv_values('.env')
-ADMIN_ID = ENV['admin_id']
 TOKEN = ENV['token']
 bot = Bot(TOKEN)
 dp = Dispatcher()
@@ -31,14 +32,14 @@ async def main():
         )
 
         await bot.delete_webhook(drop_pending_updates=True)
-        await bot.send_message(ADMIN_ID, 'Via была запущена')
+        await send_ntf_admins('Via была запущена')
         await dp.start_polling(bot)
 
     except Exception as error:
         print(error)
 
     finally:
-        await bot.send_message(ADMIN_ID, 'Via была отключена')
+        await send_ntf_admins('Via была отключена')
         await bot.session.close()
 
 

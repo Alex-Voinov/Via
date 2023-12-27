@@ -30,7 +30,7 @@ async def main():
     try:
         await initialize_db()
         dp.message.middleware(Add_msg_in_DB())
-        await gather(*TASKS)
+        gather(*TASKS)
         dp.callback_query.middleware(Add_msg_in_DB())
         dp.include_routers(
             for_keybords.router,
@@ -41,10 +41,11 @@ async def main():
         await bot.delete_webhook(drop_pending_updates=True)
         await send_ntf_admins('Via была запущена')
         await dp.start_polling(bot)
+        
 
     except Exception as error:
         print(error)
-        #await send_error_admins(error)
+        await send_error_admins(str(error))
 
     finally:
         await send_ntf_admins('Via была отключена')

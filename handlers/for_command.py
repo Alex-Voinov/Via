@@ -27,6 +27,7 @@ async def cmd_stats(message: Message):
     from main import START_TIME
     from datetime import datetime as D
     from database import get_amount_free_key
+    print(123)
     await message.reply(f'''
 Общая статистика сессии Via:
     Время запуска: {START_TIME.strftime("%Y-%m-%d %H:%M")}

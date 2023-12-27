@@ -25,14 +25,13 @@ async def cmd_prime(message: Message):
 @router.message(Command("stats"))
 async def cmd_stats(message: Message):
     from main import START_TIME
-    from data import KEY_BASE_PATH
     from datetime import datetime as D
-    amount_key = len(open(KEY_BASE_PATH, 'rt', encoding='utf-8').readlines())
+    from database import get_amount_free_key
     await message.reply(f'''
 Общая статистика сессии Via:
     Время запуска: {START_TIME.strftime("%Y-%m-%d %H:%M")}
     Время работы: {str(D.now() - START_TIME).split('.')[0]}
-    Колличество свободных prime-ключей: {amount_key}
+    Колличество свободных prime-ключей: {get_amount_free_key()}
 ''')
 
 

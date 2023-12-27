@@ -1,8 +1,15 @@
-from os.path import abspath, split, join
+DB_TITLE = 'mDataBase'
+'''Название файла содержащего базу данных.'''
 
-KEY_BASE_TITLE = 'keys.txt'
-'''Название файла модержащего прайм-ключи.'''
-KEY_BASE_PATH: str =  join(split(abspath(__file__))[0], KEY_BASE_TITLE)
+TOTAL_LEVELS_PRIVILEGES = 3
+'''Колличество уровней приведлегий.'''
+
+NEW_KEY_DELEY_CHECK = 600
+'''Частота проверки колличества свободных ключей.'''
+NEW_KEY_GENERATION_THRESHOLD = 5
+'''Минимальное колличество ключей, для генерации новых.'''
+NEW_KEY_ONETIME_ISSUE = 100
+'''Колличество ключей генерируемых за раз автоматически'''
 
 
 NOTIFICATION = False

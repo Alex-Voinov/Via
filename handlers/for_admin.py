@@ -8,7 +8,7 @@ router.message.filter(AdminFilter())
 
 @router.message(Command("generate_key", 'gk'))
 async def cmd_generate_key(message: Message):
-    from auxiliary_functions.files_working import try_generate_key
+    from database import generate_new_key
     data_list = message.text.split()
     if len(data_list) != 2:
             await message.reply('Задан не верный формат ввода.')
@@ -17,7 +17,6 @@ async def cmd_generate_key(message: Message):
     if not value.isdigit():
             await message.reply('Второй аргумент должен быть числом.')
             return 0
-    if not (bad_result:=try_generate_key(value)):
-        await message.reply(f'Я успешно сгенерировала {value} ключей')
-    else:
-        await message.reply(bad_result)   
+    await generate_new_key(int(value), message.from_user.id, 1)
+    await message.reply(f'Я успешно сгенерировала {value} ключей')
+    

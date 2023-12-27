@@ -3,7 +3,7 @@ from aiogram.types import Message
 from auxiliary_functions.text_working import msg
 from aiogram.fsm.context import FSMContext
 from handlers.models import User_answer
-
+from aiogram import types
 
 router = Router()
 
@@ -13,15 +13,22 @@ async def cmd_prime(message: Message):
     await message.reply('Всё что ты пожелаешь')
 
 
-@router.message(msg("свяжи с модераторами"))
+@router.message(msg("напиши в поддержку"))
 async def cmd_connect_moderator(message: Message, state: FSMContext):
-    from aiogram import types
     await message.answer(
         'Какое сообщение передать модератору?)',
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.set_state(User_answer.contacting_support)
 
+
+@router.message(User_answer.confirmation_support_message, msg('я хочу его отредактировать'))
+async def edit_msg_for_moderator(message: Message, state: FSMContext):
+    ...  # Случай если письмо хотят отредактировать
+
+@router.message(User_answer.confirmation_support_message, msg('нет'))
+async def close_msg_for_moderator(message: Message, state: FSMContext):
+    ...  # Случай если хотят отменить отправку письма
 
 @router.message(User_answer.confirmation_support_message, msg('да'))
 async def fetch_msg_for_moderator(message: Message, state: FSMContext): 
@@ -73,6 +80,26 @@ async def fetch_msg_for_moderator(message: Message, state: FSMContext):
             await bot.send_message(
                 id, start_message.replace('<i>','').replace('</i>','') + new_end
             )
+    finally:
+        message_hb_sent = choice((
+            'Я отправила сообщение, скоро тебе ответят)',
+            "Уже отправила) Скоро нам ответят...",
+            "Сообщение отправленно, можем развлекаться дальше)",
+            'Готово, что прикажешь сделать теперь?)',
+            'Готово, чем теперь займёмся?)',
+        ))
+        await message.answer(
+            message_hb_sent,
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        ... # Дописать взаимодействие с администратором
 
-        
+@router.message(User_answer.confirmation_support_message)
+async def bad_answer_msg_for_moderator(message: Message, state: FSMContext):
+    ... # Случай если некорректно ответили на вопрос об отправке письма
+
+
+@router.message()
+async def random_msg(message: Message):
+    print('Случайное сообщение')
 

@@ -10,7 +10,7 @@ router = Router()
 async def cmd_start(message: Message):
     BUTTONS_TEXT = (
         'Что ты умеешь?',
-        'Свяжи с модераторами',
+        'Напиши в поддержку',
         'Активируй prime-status',
     )
     kb = [[KeyboardButton(text=button_text)] for button_text in BUTTONS_TEXT]

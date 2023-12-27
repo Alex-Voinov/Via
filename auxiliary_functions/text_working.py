@@ -264,5 +264,4 @@ def beautiful_text(text: str) -> str:
          suggestions = ''
    while '<' in total_msg and '>' in total_msg:
       total_msg = total_msg[:total_msg.index('<')] + total_msg[total_msg.index('>') + 1:]
-   print(total_msg)
    return total_msg

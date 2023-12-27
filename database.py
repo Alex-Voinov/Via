@@ -104,7 +104,18 @@ def generate_new_key(
                 privilege_level=privilege_level
             )
 
-
+def issue_prime(author_id, privilege_level: int):
+    key = Secret_keys.select().where(
+        Secret_keys.privilege_level == privilege_level,
+        Secret_keys.is_issued == False
+    ).first()
+    if key:
+        key.is_issued = True
+        key.issued_by = author_id
+        key.save()
+        return key.data
+    return ''
+    
 
 async def initialize_db():
     db.connect()

@@ -9,14 +9,25 @@ router.message.filter(AdminFilter())
 @router.message(Command("generate_key", 'gk'))
 async def cmd_generate_key(message: Message):
     from database import generate_new_key
-    data_list = message.text.split()
-    if len(data_list) != 2:
-            await message.reply('Задан не верный формат ввода.')
-            return 0
-    value = data_list[1]
-    if not value.isdigit():
-            await message.reply('Второй аргумент должен быть числом.')
-            return 0
-    await generate_new_key(int(value), message.from_user.id, 1)
-    await message.reply(f'Я успешно сгенерировала {value} ключей')
-    
+    from auxiliary_functions.msg_process import check_enter_command
+    error, value = await check_enter_command(message, 'число ключей')
+    if not error:
+        await generate_new_key(int(value), message.from_user.id, 1)
+        await message.reply(f'Я успешно сгенерировала {value} ключей')
+
+
+@router.message(Command('issue_prime', 'ip'))
+async def cmd_generate_key(message: Message):
+        from auxiliary_functions.msg_process import check_enter_command
+        from database import issue_prime 
+        error, value = await check_enter_command(message, 'уровень доступа')
+        if not error:
+                prime_kay = issue_prime(message.from_user.id, value)
+                if not prime_kay:
+                      await message.reply('Что-то пошло не так...')
+                else:
+                        await message.reply(f'''
+Достала для тебя ключ активации прайм-аккаунта ^^
+Ключ: {prime_kay}.
+Уровень доступа: {value}.'''
+                        )

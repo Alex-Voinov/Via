@@ -38,13 +38,12 @@ async def cmd_stats(message: Message):
 
 @router.message(Command('clear', 'cls'))
 async def cmd_clear(message: Message):
-    from asyncio import sleep
     from main import bot
+    from asyncio import sleep
+    from database import messages_to_update
+    msg_id = message.message_id
+    user_id = message.from_user.id
     await message.answer('Дай мне секундочку...')
     await sleep(2)
-    for i in range(message.message_id, 0, -1):
-        try:  await bot.delete_message(message.from_user.id, i)
-        except: 1
-    await bot.delete_message(message.from_user.id, message.message_id + 1)
-
-
+    await messages_to_update(user_id)
+    await bot.delete_message(user_id, msg_id + 1)

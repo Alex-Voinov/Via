@@ -29,6 +29,7 @@ async def main():
     try:
         await initialize_db()
         dp.message.middleware(Add_msg_in_DB())
+        dp.callback_query.middleware(Add_msg_in_DB())
         dp.include_routers(
             for_keybords.router,
             for_command.router,
@@ -47,7 +48,6 @@ async def main():
         await send_ntf_admins('Via была отключена')
         await bot.session.close()
         db_close()
-
 
 
 if __name__ == "__main__":

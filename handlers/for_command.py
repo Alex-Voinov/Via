@@ -6,33 +6,32 @@ router = Router()
 
 @router.message(Command("info"))
 async def cmd_start(message: Message):
+    from database import get_user_info
+    from data import MAX_LEN_ROW_MSG
+    id_user = message.from_user.id
+    user_info = get_user_info(id_user)
+    prime_status = user_info.prime_status
     info_msg: str = f'''
-Ваш id: {message.from_user.id}
-Полноем имя вашего профиля: {message.from_user.full_name}
-Ваш язык: {message.from_user.language_code}
+Рассказать, что я о тебе знаю?)
+\tИмя: {message.from_user.full_name:>{MAX_LEN_ROW_MSG - len('Имя: ')}}
+\tУровень привелегий: {'отсутсвует' if not prime_status else prime_status:>{MAX_LEN_ROW_MSG - len('Уровень привелегий: ')}}
+\tTellegram-id: {id_user:>{MAX_LEN_ROW_MSG - len('Tellegram-id: ')}}
+\tЯзык: {message.from_user.language_code:>{MAX_LEN_ROW_MSG - len('Язык: ')}}
 '''
     await message.answer(info_msg)
-
-
-@router.message(Command("prime"))
-async def cmd_prime(message: Message):
-    from main import KEY_BASE_TITLE
-    #######
-    SECRET_KEYS = (key.strip() for key in open(KEY_BASE_TITLE, 'rt', encoding='utf-8'))
-    await message.reply(" ".join(SECRET_KEYS))
 
 
 @router.message(Command("stats"))
 async def cmd_stats(message: Message):
     from main import START_TIME
-    from data import KEY_BASE_PATH
     from datetime import datetime as D
-    amount_key = len(open(KEY_BASE_PATH, 'rt', encoding='utf-8').readlines())
+    from database import get_amount_free_key
+    print(123)
     await message.reply(f'''
 Общая статистика сессии Via:
     Время запуска: {START_TIME.strftime("%Y-%m-%d %H:%M")}
     Время работы: {str(D.now() - START_TIME).split('.')[0]}
-    Колличество свободных prime-ключей: {amount_key}
+    Колличество свободных prime-ключей: {get_amount_free_key()}
 ''')
 
 
@@ -47,3 +46,8 @@ async def cmd_clear(message: Message):
     await sleep(2)
     await messages_to_update(user_id)
     await bot.delete_message(user_id, msg_id + 1)
+
+
+@router.message(Command('prime', 'activate'))
+async def cmd_prime(message: Message):
+    ...

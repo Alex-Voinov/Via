@@ -1,12 +1,14 @@
 from peewee import SqliteDatabase, Model, IntegerField, CharField, BooleanField, DateTimeField
 from sending_messages.admin_msg import send_ntf_admins
+from data import DB_TITLE
 
-db = SqliteDatabase('main_db.db')
+
+db = SqliteDatabase(DB_TITLE+'.db')
 
 class User(Model):
     user_id = IntegerField(unique=True, primary_key=True)
     username = CharField(null=True)
-    is_prime = BooleanField(null=False, default=False)
+    prime_status = IntegerField(null=False, default=0)
 
 
     class Meta:
@@ -35,13 +37,15 @@ class Admin(Model):
 class Secret_keys(Model):
     from data import LENG_KEY
     data = CharField(max_length=LENG_KEY, unique=True, primary_key=True, null=False)
+    privilege_level = IntegerField(null=False)
     created_by = IntegerField(null=False)
     registration_date = DateTimeField(null=False)
-    privilege_level = IntegerField(null=False)
     is_issued = BooleanField(default=False, null=False)
     issued_by = IntegerField(null=True)
+    issued_date = DateTimeField(null=True)
     is_activeted = BooleanField(default=False, null=False)
     by_activeted = IntegerField(null=True, unique=True)
+    activeted_date = DateTimeField(null=True)
 
     class Meta:
         database = db
@@ -71,6 +75,54 @@ async def messages_to_update(user_id):
         except: 1
         message.is_deleted = True
         message.save()
+
+def get_amount_free_key(privilegies_lvl=0):
+    if not privilegies_lvl:
+        return Secret_keys.select().where(Secret_keys.is_issued == False).count()
+    return Secret_keys.select().where(
+        Secret_keys.is_issued == False,
+        Secret_keys.privilege_level==privilegies_lvl
+    ).count()
+
+def generate_new_key(
+        amount_key: int,
+        author_id: int,
+        privilege_level: int
+    ):
+    from datetime import datetime
+    from data import LENG_KEY
+    from random import choice
+    from string import ascii_lowercase as letters
+    successful_keys = 0
+    generate_date = datetime.now()
+    while successful_keys < amount_key:
+        probably_key = ''.join(choice(letters) for _ in range(LENG_KEY))
+        if not Secret_keys.get_or_none(data=probably_key):
+            successful_keys += 1
+            Secret_keys.create(
+                data=probably_key,
+                created_by=author_id,
+                registration_date=generate_date,
+                privilege_level=privilege_level
+            )
+
+def issue_prime(author_id, privilege_level: int):
+    from datetime import datetime
+    key = Secret_keys.select().where(
+        Secret_keys.privilege_level == privilege_level,
+        Secret_keys.is_issued == False
+    ).first()
+    if key:
+        key.issued_date = datetime.now()
+        key.is_issued = True
+        key.issued_by = author_id
+        key.save()
+        return key.data
+    return ''
+    
+def get_user_info(id: int):
+    if user:=User.get_by_id(id):
+        return user
 
 async def initialize_db():
     db.connect()

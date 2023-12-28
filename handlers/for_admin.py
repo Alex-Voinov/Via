@@ -2,37 +2,47 @@ from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters.command import Command
 from filters.access_rights import AdminFilter
-from database import add_admin_this_request
-from aiogram.fsm.context import FSMContext
-from handlers.models import User_answer
-from main import bot
 
 router = Router()
 router.message.filter(AdminFilter())
 
 @router.message(Command("generate_key", 'gk'))
 async def cmd_generate_key(message: Message):
-    from auxiliary_functions.files_working import try_generate_key
-    data_list = message.text.split()
-    if len(data_list) != 2:
-            await message.reply('Задан не верный формат ввода.')
-            return 0
-    value = data_list[1]
-    if not value.isdigit():
-            await message.reply('Второй аргумент должен быть числом.')
-            return 0
-    if not (bad_result:=try_generate_key(value)):
-        await message.reply(f'Я успешно сгенерировала {value} ключей')
-    else:
-        await message.reply(bad_result)
+    from database import generate_new_key
+    from auxiliary_functions.msg_process import check_enter_command
+    from data import ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT, ADMIN_GENERATE_NEW_KEY_MIN_AMOUNT
+    error, value = await check_enter_command(
+        message,
+        'число ключей',
+        ADMIN_GENERATE_NEW_KEY_MIN_AMOUNT,
+        ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT,
+        2
+    )
+    if not error:
+        amount, lvl = value
+        generate_new_key(amount, message.from_user.id, lvl)
+        await message.reply(f'Я успешно сгенерировала {amount} ключей {lvl} уровня!')
 
-@router.message(Command("make_admin", "ma"))
-async def cmd_make_admin(message: Message, state: FSMContext):
-        info = message.text.split()
-        bot.send_message(info[1], 'Доброго времени суток. Вас хотят сделать амнимистратором. Введите допольнительную информацию о себе. Как вас зовут (Имя Фамилия)?')
-        await state.set_state(User_answer.write_name)
-        data = await state.get_data()
-        user_name = data['write_name']
-        user_email = data['write_email']
-        await state.clear()
-        add_admin_this_request(info[1], user_name, message.from_user.id, user_email)
+
+@router.message(Command('issue_prime', 'ip'))
+async def cmd_generate_key(message: Message):
+        from auxiliary_functions.msg_process import check_enter_command
+        from data import TOTAL_LEVELS_PRIVILEGES
+        from database import issue_prime 
+        error, value = await check_enter_command(
+            message,
+            'уровень доступа',
+            1,
+            TOTAL_LEVELS_PRIVILEGES
+        )
+        if not error:
+            prime_kay = issue_prime(message.from_user.id, value)
+            if not prime_kay:
+                await message.reply('Что-то пошло не так...')
+            else:
+                await message.reply(f'''
+Достала для тебя ключ активации прайм-аккаунта ^^
+Ключ: <span class="tg-spoiler"><b>{prime_kay}</b></span>.
+Уровень доступа: {value}.''',
+parse_mode='html'
+        )

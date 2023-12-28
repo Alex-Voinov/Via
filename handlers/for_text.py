@@ -1,9 +1,9 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from auxiliary_functions.text_working import msg
 from aiogram.fsm.context import FSMContext
 from handlers.models import User_answer
-from aiogram import types
+
 
 router = Router()
 
@@ -12,12 +12,19 @@ router = Router()
 async def cmd_prime(message: Message):
     await message.reply('Всё что ты пожелаешь')
 
+@router.message(msg('активируй prime-status'))
+async def cmd_prime(message: Message, state: FSMContext):
+    await message.answer(
+        'Напиши мне свой ключ активации',
+        reply_markup=ReplyKeyboardRemove()
+    )
+    await state.set_state(User_answer.secret_key)
 
 @router.message(msg("напиши в поддержку"))
 async def cmd_connect_moderator(message: Message, state: FSMContext):
     await message.answer(
         'Какое сообщение передать модератору?)',
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=ReplyKeyboardRemove()
     )
     await state.set_state(User_answer.contacting_support)
 
@@ -90,7 +97,7 @@ async def fetch_msg_for_moderator(message: Message, state: FSMContext):
         ))
         await message.answer(
             message_hb_sent,
-            reply_markup=types.ReplyKeyboardRemove()
+            reply_markup=ReplyKeyboardRemove()
         )
         ... # Дописать взаимодействие с администратором
 

@@ -119,7 +119,43 @@ def issue_prime(author_id, privilege_level: int):
         key.save()
         return key.data
     return ''
-    
+
+def try_activate_prime(
+        probably_secret_key,
+        activater_id
+    ) -> tuple[bool, int]:
+    '''
+Осуществляем проверку секретного ключа в базе данных.
+
+Результат проверки - bool-значение (успешно не успешно)
++ статус код:
+
+    0 - ключа не существует в базе данных.
+
+    1 - ключ существует, но ещё не был выдан.
+
+    2 - ключ существует, был выдан, но уже активирован.
+
+    3 - корректный ключ, выданный для активации.    
+    '''
+    from datetime import datetime
+    secret_key=Secret_keys.get_by_id(probably_secret_key)
+    if not secret_key:
+        return False, 0
+    if not secret_key.issued_by:
+        return False, 1
+    if secret_key.is_activeted:
+        return False, 2
+    secret_key.is_activeted = True
+    secret_key.by_activeted = activater_id
+    secret_key.activeted_date = datetime.now()
+    privilege_level = secret_key.privilege_level
+    user = User.get_by_id(activater_id)
+    user.prime_status = privilege_level
+    user.save()
+    secret_key.save()
+    return True, privilege_level
+
 def get_user_info(id: int):
     if user:=User.get_by_id(id):
         return user

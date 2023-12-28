@@ -91,7 +91,7 @@ def generate_new_key(
     from data import LENG_KEY
     from random import choice
     from string import ascii_lowercase as letters
-    successful_keys = 0  
+    successful_keys = 0
     generate_date = datetime.now()
     while successful_keys < amount_key:
         probably_key = ''.join(choice(letters) for _ in range(LENG_KEY))

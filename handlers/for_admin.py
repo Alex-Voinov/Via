@@ -19,10 +19,9 @@ async def cmd_generate_key(message: Message):
         2
     )
     if not error:
-        print(value)
         amount, lvl = value
-        await generate_new_key(amount, message.from_user.id, lvl)
-        await message.reply(f'Я успешно сгенерировала {amount} ключей')
+        generate_new_key(amount, message.from_user.id, lvl)
+        await message.reply(f'Я успешно сгенерировала {amount} ключей {lvl} уровня!')
 
 
 @router.message(Command('issue_prime', 'ip'))

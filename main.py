@@ -29,7 +29,7 @@ async def main():
     try:
         await initialize_db()
         dp.message.middleware(Add_msg_in_DB())
-        dp.callback_query.middleware(Add_msg_in_DB())
+        #dp.callback_query.middleware(Add_msg_in_DB())
         dp.include_routers(
             for_keybords.router,
             for_command.router,

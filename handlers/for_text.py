@@ -98,6 +98,28 @@ async def fetch_msg_for_moderator(message: Message, state: FSMContext):
 async def bad_answer_msg_for_moderator(message: Message, state: FSMContext):
     ... # Случай если некорректно ответили на вопрос об отправке письма
 
+@router.message(User_answer.write_name)
+async def fill_full_name_user(message: Message, state: FSMContext):
+    user_str = message.text
+    full_name = user_str.split()
+    if len(full_name) != 2:
+        await message.reply('Пожалуйста, придерживайтесь правил ввода данных (Только имя и фамилия). Попробуйте еще раз.')
+    else:
+        if user_str.replace(' ', '').isalpha():
+            if 2 < len(user_str) < 40:
+                await state.update_data(user_name = user_str.title())
+                await message.reply(f'Отлично {user_str.title()}, теперь введите свою электронную почту.')
+                await state.set_state(User_answer.write_email)
+            else:
+                await message.reply('Пожалуйста, придерживайтесь правил ввода данных (введите настоящие имя и фалимию). Попробуйте еще раз.')
+        else:
+            await message.reply('Пожалуйста, придерживайтесь правил ввода данных (имя и фамилия не добжны содержать цифр). Попробуйте еще раз.')
+
+@router.message(User_answer.write_email)
+async def fill_email_user(message:Message, state: FSMContext):
+    user_str = message.text
+    await state.update_data(user_email = user_str)
+    await message.reply('Спасибо за информацию. Теперь вы являетесь админом бота Via!')
 
 @router.message()
 async def random_msg(message: Message):

@@ -1,4 +1,4 @@
-from peewee import SqliteDatabase, Model, IntegerField, CharField, BooleanField
+from peewee import SqliteDatabase, Model, IntegerField, CharField, BooleanField, DateTimeField
 from sending_messages.admin_msg import send_ntf_admins
 
 db = SqliteDatabase('main_db.db')
@@ -26,6 +26,25 @@ class Admin(Model):
     user_id = IntegerField(unique=True, primary_key=True)
     full_name = CharField(null=False)
     email = CharField(null=False)
+    invited_by = IntegerField()
+    registration_date = DateTimeField()
+
+    class Meta:
+        database = db
+
+class Secret_keys(Model):
+    from data import LENG_KEY
+    data = CharField(max_length=LENG_KEY, unique=True, primary_key=True, null=False)
+    created_by = IntegerField(null=False)
+    registration_date = DateTimeField(null=False)
+    privilege_level = IntegerField(null=False)
+    is_issued = BooleanField(default=False, null=False)
+    issued_by = IntegerField(null=True)
+    is_activeted = BooleanField(default=False, null=False)
+    by_activeted = IntegerField(null=True, unique=True)
+
+    class Meta:
+        database = db
 
 def create_new_msg(
     chat_id: int,
@@ -55,8 +74,15 @@ async def messages_to_update(user_id):
 
 async def initialize_db():
     db.connect()
-    db.create_tables([User, Message, Admin], safe=True)
+    db.create_tables([User, Message, Admin, Secret_keys], safe=True)
     await send_ntf_admins("Базы данных загруженны.")
 
 def db_close():
     db.close()
+
+async def add_admin_this_request(userID, name, adminID, userEmail):
+    from datetime import datetime
+    date_now = datetime.now()
+    new_admin = Admin(user_id = userID, full_name = name, email = userEmail, invited_by = adminID, registration_date = date_now)
+    new_admin.save()
+    

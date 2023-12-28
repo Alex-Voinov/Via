@@ -3,7 +3,7 @@ DB_TITLE = 'mDataBase'
 
 
 TOTAL_LEVELS_PRIVILEGES = 3
-'''Колличество уровней приведлегий.'''
+'''Колличество уровней привелегий.'''
 
 
 NEW_KEY_DELEY_CHECK = 600

@@ -15,11 +15,14 @@ async def cmd_generate_key(message: Message):
         message,
         'число ключей',
         ADMIN_GENERATE_NEW_KEY_MIN_AMOUNT,
-        ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT
+        ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT,
+        2
     )
     if not error:
-        await generate_new_key(int(value), message.from_user.id, 1)
-        await message.reply(f'Я успешно сгенерировала {value} ключей')
+        print(value)
+        amount, lvl = value
+        await generate_new_key(amount, message.from_user.id, lvl)
+        await message.reply(f'Я успешно сгенерировала {amount} ключей')
 
 
 @router.message(Command('issue_prime', 'ip'))

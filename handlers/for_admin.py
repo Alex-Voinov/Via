@@ -42,6 +42,7 @@ async def cmd_generate_key(message: Message):
             else:
                 await message.reply(f'''
 Достала для тебя ключ активации прайм-аккаунта ^^
-Ключ: {prime_kay}.
-Уровень доступа: {value}.'''
-                )
+Ключ: <span class="tg-spoiler"><b>{prime_kay}</b></span>.
+Уровень доступа: {value}.''',
+parse_mode='html'
+        )

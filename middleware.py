@@ -17,6 +17,6 @@ class Add_msg_in_DB(BaseMiddleware):
             msg_id = event.message_id
             text = event.text
             username = event.from_user.full_name
-            create_new_msg(user_id, msg_id, text, username) 
+            create_new_msg(user_id, msg_id, text, username)
         result = await handler(event, data)
         return result

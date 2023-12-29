@@ -1,7 +1,7 @@
 from typing import Callable, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
-from database import create_new_msg
+from database.message import create_new_msg
 from aiogram.types import Message
 
 

@@ -1,5 +1,5 @@
 async def check_exist_free_key():
-    from database import generate_new_key, get_amount_free_key
+    from database.secret_key import generate_new_key, get_amount_free_key
     from asyncio import sleep
     from data import (
         NEW_KEY_DELEY_CHECK,

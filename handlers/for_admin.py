@@ -8,7 +8,7 @@ router.message.filter(AdminFilter())
 
 @router.message(Command("generate_key", 'gk'))
 async def cmd_generate_key(message: Message):
-    from database import generate_new_key
+    from database.secret_key import generate_new_key
     from auxiliary_functions.msg_process import check_enter_command
     from data import ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT, ADMIN_GENERATE_NEW_KEY_MIN_AMOUNT
     error, value = await check_enter_command(
@@ -28,7 +28,7 @@ async def cmd_generate_key(message: Message):
 async def cmd_generate_key(message: Message):
         from auxiliary_functions.msg_process import check_enter_command
         from data import TOTAL_LEVELS_PRIVILEGES
-        from database import issue_prime 
+        from database.secret_key import issue_prime 
         error, value = await check_enter_command(
             message,
             'уровень доступа',

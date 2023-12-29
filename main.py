@@ -4,7 +4,7 @@ from logging import basicConfig, DEBUG
 from aiogram import Bot, Dispatcher 
 from datetime import datetime as D
 from sending_messages.admin_msg import send_ntf_admins, send_error_admins
-from database import initialize_db, db_close
+from database.initial import initialize_db, db_close
 from middleware import Add_msg_in_DB
 from ongoing_processes import TASKS
 

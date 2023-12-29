@@ -9,7 +9,7 @@ router = Router()
 
 @router.message(Command("info"))
 async def cmd_start(message: Message):
-    from database import get_user_info
+    from database.user import get_user_info
     id_user = message.from_user.id
     user_info = get_user_info(id_user)
     prime_status = user_info.prime_status
@@ -27,8 +27,7 @@ async def cmd_start(message: Message):
 async def cmd_stats(message: Message):
     from main import START_TIME
     from datetime import datetime as D
-    from database import get_amount_free_key
-    print(123)
+    from database.secret_key import get_amount_free_key
     await message.reply(f'''
 Общая статистика сессии Via:
     Время запуска: {START_TIME.strftime("%Y-%m-%d %H:%M")}
@@ -41,7 +40,7 @@ async def cmd_stats(message: Message):
 async def cmd_clear(message: Message):
     from main import bot
     from asyncio import sleep
-    from database import messages_to_update
+    from database.message import messages_to_update
     msg_id = message.message_id
     user_id = message.from_user.id
     await message.answer('Дай мне секундочку...')
@@ -60,7 +59,7 @@ async def cmd_prime(message: Message, state: FSMContext):
 
 @router.message(User_answer.secret_key)
 async def check_secret_key(message: Message, state: FSMContext):
-    from database import try_activate_prime
+    from database.secret_key import try_activate_prime
     success, status_code = try_activate_prime(message.text, message.from_user.id)
     if not success:
         if status_code == 0:

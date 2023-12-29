@@ -36,11 +36,11 @@ def generate_new_key(
     from datetime import datetime
     from data import LENG_KEY
     from random import choice
-    from string import ascii_lowercase as letters
+    from string import ascii_letters as letters, digits
     successful_keys = 0
     generate_date = datetime.now()
     while successful_keys < amount_key:
-        probably_key = ''.join(choice(letters) for _ in range(LENG_KEY))
+        probably_key = ''.join(choice(letters + digits) for _ in range(LENG_KEY))
         if not Secret_keys.get_or_none(data=probably_key):
             successful_keys += 1
             Secret_keys.create(
@@ -84,6 +84,9 @@ def try_activate_prime(
     '''
     from datetime import datetime
     from database.user import User
+    from data import LENG_KEY
+    if len(secret_key) != LENG_KEY:
+        return False, 0
     secret_key= Secret_keys.select().where(
         Secret_keys.data==probably_secret_key
     ).first()

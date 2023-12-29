@@ -49,117 +49,6 @@ def is_bad_word(probably_bad_word: str) -> bool:
         'ебал',
         'сучк',
         'долба',
-    )
-    for charter, simalr_charter in SIMILAR_CHARACTERS.items():
-        probably_bad_word = probably_bad_word.replace(charter, simalr_charter)
-    probably_bad_word = ''.join(tuple(filter(str.isalpha, probably_bad_word)))
-    for bad_word in BAD_WORDS:
-        if bad_word in probably_bad_word.lower():
-            return True
-    return False
-
-
-def is_bad_word(probably_bad_word: str) -> bool:
-    SIMILAR_CHARACTERS = {
-        '4': 'ч',
-        '6': 'б',
-        'k': 'к',
-        'a': 'а',
-        'b' : 'б',
-        's': 'с',
-        'x': 'х',
-        'y': 'у',
-        'u': 'у',
-        'e': 'е',
-        'w': 'ш',
-        'ё': 'е',
-        'r': 'р',
-        'p': 'р',
-        'h': 'н',
-        'l': 'л',
-        'd': 'д',
-        'j': 'ж',
-        'й': 'и',
-        '7': 'г',
-        'j': 'ж',
-        'o': 'о',
-        'g': 'г',
-        'i': 'и'
-    }
-    BAD_WORDS = (
-        'сук',
-        'уеб',
-        'пизд',
-        'пидор',
-        'pи',
-        'pi',
-        'пидр',
-        'пидар',
-        'жоп',
-        'хуе',
-        'хуи',
-        'говн',
-        'дерь',
-        'ебат',
-        'ебан',
-        'ебал',
-        'сучк',
-        'долба',
-        'отсос'
-    )
-    for charter, simalr_charter in SIMILAR_CHARACTERS.items():
-        probably_bad_word = probably_bad_word.replace(charter, simalr_charter)
-    probably_bad_word = ''.join(tuple(filter(str.isalpha, probably_bad_word)))
-    for bad_word in BAD_WORDS:
-        if bad_word in probably_bad_word.lower():
-            return True
-    return False
-
-
-def is_bad_word(probably_bad_word: str) -> bool:
-    SIMILAR_CHARACTERS = {
-        '4': 'ч',
-        '6': 'б',
-        'k': 'к',
-        'a': 'а',
-        'b' : 'б',
-        's': 'с',
-        'x': 'х',
-        'y': 'у',
-        'u': 'у',
-        'e': 'е',
-        'w': 'ш',
-        'ё': 'е',
-        'r': 'р',
-        'p': 'р',
-        'h': 'н',
-        'l': 'л',
-        'd': 'д',
-        'j': 'ж',
-        'й': 'и',
-        '7': 'г',
-        'j': 'ж',
-        'o': 'о',
-        'g': 'г',
-        'i': 'и'
-    }
-    BAD_WORDS = (
-        'сук',
-        'уеб',
-        'пизд',
-        'пидор',
-        'пидр',
-        'пидар',
-        'жоп',
-        'хуе',
-        'хуи',
-        'говн',
-        'дерь',
-        'ебат',
-        'ебан',
-        'ебал',
-        'сучк',
-        'долба',
         'отсоси',
     )
     for charter, simalr_charter in SIMILAR_CHARACTERS.items():
@@ -255,7 +144,7 @@ def beautiful_text(text: str) -> str:
             if is_bad_word(word): word = '***'
             suggestions += word + ' ' + char
             word = ''
-      elif char in SENTENCE_END_CHARS and (suggestions or word): #добавил or word. Проверь, ничего ли не ломается!
+      elif char in SENTENCE_END_CHARS and (suggestions or word): 
          if is_bad_word(word): word = '***'
          total_msg += (" " if total_msg else '') + (
             suggestions + (" " if suggestions and word else '') + word
@@ -265,3 +154,28 @@ def beautiful_text(text: str) -> str:
    while '<' in total_msg and '>' in total_msg:
       total_msg = total_msg[:total_msg.index('<')] + total_msg[total_msg.index('>') + 1:]
    return total_msg
+
+def pluralize_word(
+      word: str,
+      e_1: str, 
+      e_2: str, 
+      number: int
+   ) -> str:
+    """
+    Склоняет слово в зависимости от числа.
+
+    :param word: Слово, которое нужно склонять.
+    :param e_1: Окончание для первого случая.
+    :param e_2: Окончание для второго случая.
+    :param number: Число, по которому определяется форма слова.
+    :return: Склоненное слово.
+    """
+    if number % 10 == 1 and number % 100 != 11:
+        result_word = word 
+    elif 2 <= number % 10 <= 4 and (number % 100 < 10 or number % 100 >= 20):
+        result_word = word + e_1 
+    else:
+        result_word = word + e_2  
+
+    return result_word
+

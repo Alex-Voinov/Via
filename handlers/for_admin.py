@@ -11,6 +11,7 @@ async def cmd_generate_key(message: Message):
     from database.secret_key import generate_new_key
     from auxiliary_functions.msg_process import check_enter_command
     from data import ADMIN_GENERATE_NEW_KEY_MAX_AMOUNT, ADMIN_GENERATE_NEW_KEY_MIN_AMOUNT
+    from auxiliary_functions.text_working import pluralize_word
     error, value = await check_enter_command(
         message,
         'число ключей',
@@ -21,7 +22,10 @@ async def cmd_generate_key(message: Message):
     if not error:
         amount, lvl = value
         generate_new_key(amount, message.from_user.id, lvl)
-        await message.reply(f'Я успешно сгенерировала {amount} ключей {lvl} уровня!')
+        await message.reply(
+            f'Я успешно сгенерировала {amount}'
+            f' {pluralize_word("ключ", "a", "ей", amount)} {lvl} уровня!'
+        )
 
 
 @router.message(Command('issue_prime', 'ip'))

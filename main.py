@@ -7,6 +7,7 @@ from sending_messages.admin_msg import send_ntf_admins, send_error_admins
 from database.initial import initialize_db, db_close
 from middleware import Add_msg_in_DB
 from ongoing_processes import TASKS
+from database.admin import get_id_admins, create_superuser
 
 
 from handlers import (
@@ -29,9 +30,10 @@ async def main():
 
     try:
         await initialize_db()
+        if not get_id_admins():
+            await create_superuser() 
         dp.message.middleware(Add_msg_in_DB())
         gather(*TASKS)
-        dp.callback_query.middleware(Add_msg_in_DB())
         dp.include_routers(
             for_keybords.router,
             for_command.router,

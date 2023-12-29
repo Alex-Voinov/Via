@@ -1,7 +1,6 @@
 from peewee import Model, IntegerField, CharField, BooleanField, DateTimeField
 
 
-
 class Secret_keys(Model):
     from data import LENG_KEY
     data = CharField(max_length=LENG_KEY, unique=True, primary_key=True, null=False)
